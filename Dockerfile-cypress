@@ -1,0 +1,44 @@
+# Use a compatible Node.js version
+FROM node:16-alpine
+
+## Set the working directory
+#WORKDIR /usr/src/app
+#
+## Copy package.json and package-lock.json (if available)
+#COPY package.json ./
+#
+## Install Cypress
+#RUN npm install cypress@12.2.0
+#
+## Copy cypress files and folders
+#COPY cypress /usr/src/app/cypress
+#COPY cypress.json /usr/src/app/cypress.json
+#
+## Command to run Cypress tests
+#CMD ["npx", "cypress", "run"]
+
+# Use a compatible Node.js version
+FROM node:16-alpine
+
+# Install necessary dependencies for Cypress and Xvfb
+RUN apk add --no-cache \
+    udev \
+    chromium \
+    xvfb-run \
+    && ln -s /usr/bin/chromium-browser /usr/bin/chrome
+
+# Set the working directory
+WORKDIR /usr/src/app
+
+# Copy package.json and package-lock.json (if available)
+COPY package.json ./
+
+# Install Cypress
+RUN npm install cypress@12.2.0
+
+# Copy cypress files and folders
+COPY cypress /usr/src/app/cypress
+COPY cypress.json /usr/src/app/cypress.json
+
+# Command to run Cypress tests
+CMD ["xvfb-run", "npx", "cypress", "run"]
